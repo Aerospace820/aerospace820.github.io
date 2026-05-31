@@ -678,7 +678,7 @@
   }
   .cf-input::placeholder, .cf-textarea::placeholder { color: var(--text-muted); }
   .cf-input:focus, .cf-textarea:focus { border-color: var(--gold-border); }
-  .cf-textarea { height: 110px; }
+  .cf-textarea { height: 220px; }
   .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
   .cf-field { display: flex; flex-direction: column; }
   .cf-btn {
@@ -687,6 +687,7 @@
     background: var(--gold);
     color: var(--bg);
     border: none;
+    margin-top: 10px;
     border-radius: 3px;
     font-family: var(--mono);
     font-size: 12px;
@@ -1112,13 +1113,33 @@
 <script>
   // ── CURSOR ──
   const cursor = document.getElementById('cursor');
+  // 1. Create a reusable check for touch devices
+  const isTouchDevice = () => window.matchMedia('(pointer: coarse)').matches;
   document.addEventListener('mousemove', e => {
+    if (isTouchDevice()) return;
+
+    // 1. Force the custom cursor to position correctly
     cursor.style.left = e.clientX + 'px';
     cursor.style.top  = e.clientY + 'px';
+
+    // 2. ULTRA HARD RESET: Target the specific element under the mouse 
+    // and instantly strip its native cursor away dynamically
+    if (e.target) {
+      e.target.style.cursor = 'none';
+    }
   });
   document.querySelectorAll('a, button, .proj-card, .exp-card, .award-item, .hero-badge').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('expanded'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('expanded'));
+    el.addEventListener('mouseenter', () => {
+      // Prevent expanding on mobile tap
+      if (isTouchDevice()) return;
+      cursor.classList.add('expanded');
+    });
+    
+    el.addEventListener('mouseleave', () => {
+      // Safe fallback for desktop
+      if (isTouchDevice()) return;
+      cursor.classList.remove('expanded');
+    });
   });
 
   // ── SCROLL REVEAL ──
