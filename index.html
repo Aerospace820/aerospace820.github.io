@@ -9,22 +9,33 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg:        #0a0a0a;
-    --bg-2:      #0f0f0f;
-    --bg-3:      #141414;
-    --bg-card:   #111111;
-    --border:    rgba(255,255,255,0.08);
-    --border-hi: rgba(255,255,255,0.15);
-    --text:      #e8e2d5;
-    --text-soft: #a09a90;
-    --text-muted:#555;
-    --gold:      #c9a96e;
-    --gold-dim:  rgba(201,169,110,0.15);
-    --gold-border:rgba(201,169,110,0.3);
-    --green:     #4ade80;
-    --green-dim: rgba(74,222,128,0.1);
-    --rule:      rgba(255,255,255,0.06);
+:root {
+    /* Backgrounds (Kept your excellent dark tones) */
+    --bg:          #0a0a0a;
+    --bg-2:        #0f0f0f;
+    --bg-3:        #141414;
+    --bg-card:     #111111;
+    --border:      rgba(255, 255, 255, 0.08);
+    --border-hi:   rgba(255, 255, 255, 0.15);
+    --rule:        rgba(255, 255, 255, 0.06);
+
+    /* Accessible Text Colors (High Contrast & Readable) */
+    --text:        #f5f5f7;  /* Off-white: Bright but reduces eye strain */
+    --text-soft:   #a1a1aa;  /* Light Grey: Great for subheadings/paragraphs */
+    --text-muted:  #71717a;  /* Medium Grey: Perfect for captions/disabled text */
+
+    /* Accent 1: The Cyan/Teal (Moved to branding/accent usage) */
+    --accent:      #29fbff;  /* Use sparingly for links, buttons, or highlights */
+    --accent-soft: #169395;  /* Darker teal for borders or hover states */
+
+    /* Accent 2: Gold (Fixed to actual accessible gold tones) */
+    --gold:        #f59e0b;  /* Vibrant, readable amber/gold */
+    --gold-dim:    rgba(245, 158, 11, 0.1); 
+    --gold-border: rgba(245, 158, 11, 0.3);
+
+    /* Accent 3: Green (Kept your nice modern emerald green) */
+    --green:       #4ade80;  
+    --green-dim:   rgba(74, 222, 128, 0.1);
     --serif:     'Instrument Serif', Georgia, serif;
     --sans:      'Syne', sans-serif;
     --mono:      'IBM Plex Mono', monospace;
@@ -67,7 +78,7 @@
     z-index: 500;
   }
 
-  /* ── NAV ── */
+  /* ── NAV (DESKTOP DEFAULT) ── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
@@ -80,23 +91,34 @@
     backdrop-filter: blur(14px);
     border-bottom: 1px solid var(--border);
   }
+
   .nav-logo {
     font-family: var(--mono);
     font-size: 13px;
     color: var(--gold);
     letter-spacing: 0.06em;
   }
-  .nav-links { display: flex; gap: 32px; align-items: center; }
+
+  .nav-links { 
+    display: flex; 
+    gap: 32px; 
+    align-items: center; 
+  }
+
   .nav-links a {
     text-decoration: none;
     font-size: 11px;
     font-weight: 600;
-    color: var(--text-muted);
+    color: var(--text-soft);    
     letter-spacing: 0.12em;
     text-transform: uppercase;
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--text); }
+
+  .nav-links a:hover { 
+    color: var(--text); 
+  }
+
   .nav-cta {
     font-family: var(--mono);
     font-size: 11px;
@@ -107,7 +129,114 @@
     text-decoration: none;
     transition: background 0.2s, color 0.2s;
   }
-  .nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+  .nav-cta:hover { 
+    background: var(--gold); 
+    color: var(--bg); 
+  }
+
+  /* Hide mobile structures on Desktop views */
+  .menu-toggle, 
+  .hamburger {
+    display: none;
+  }
+
+
+  /* ── MOBILE RESPONSIVE PREMIUM SYSTEM ── */
+  @media (max-width: 768px) {
+    nav {
+      padding: 18px 24px; 
+      box-sizing: border-box;
+      position: fixed; /* Explicitly ensure nav anchors structurally */
+    }
+
+    /* Reveal the hamburger button */
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      z-index: 210;
+    }
+    
+    /* Create the 3 distinct gold bars */
+    .hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background-color: var(--gold);
+      transform-origin: center;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+                  opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Hide the underlying checkbox functional mechanics */
+    .menu-toggle {
+      display: none;
+    }
+
+    /* Dropdown Drawer Initial Hidden State */
+    .nav-links {
+      display: flex !important;    /* Force layout engine to process flex parameters */         
+      position: absolute;
+      top: 100%; 
+      left: 0;                     /* CRITICAL: Force stretch to the left edge */
+      right: 0;                    /* CRITICAL: Force stretch to the right edge */
+      width: 100vw;                /* CRITICAL: Explicitly set viewport width bounds */
+      max-width: 100%;             /* Prevents horizontal overflow layout glitches */
+      box-sizing: border-box;
+      flex-direction: column;
+      align-items: stretch;
+      background: #0f0f0f;         /* Solid base color */
+      padding: 32px 24px;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+
+      /* Transition Mechanics */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-12px); 
+      pointer-events: none;         
+      
+      transition: opacity 0.25s ease-out, 
+                  transform 0.25s ease-out, 
+                  visibility 0.25s ease-out;
+    }
+
+    /* OPEN STATE: Triggered smoothly when checked */
+    .menu-toggle:checked ~ .nav-links {
+      opacity: 1 !important;
+      visibility: visible !important;
+      transform: translateY(0) !important;
+      pointer-events: auto !important;
+    }
+
+    /* MORPHING HAMBURGER: Transforms lines into a crisp "X" */
+    .menu-toggle:checked ~ .hamburger span:nth-child(1) {
+      transform: translateY(6px) rotate(45deg);
+    }
+    .menu-toggle:checked ~ .hamburger span:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0);
+    }
+    .menu-toggle:checked ~ .hamburger span:nth-child(3) {
+      transform: translateY(-6px) rotate(-45deg);
+    }
+
+    /* Force anchor text visibility inside mobile drawers */
+    .nav-links a {
+      display: block;
+      width: 100%;
+      padding: 8px 0;
+    }
+
+    .nav-cta {
+      text-align: center;
+      display: block;
+      margin-top: 8px;
+    }
+  }
 
   /* ── HERO ── */
   .hero {
@@ -127,8 +256,8 @@
     background: var(--bg-2);
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 52px 48px;
+    justify-content: center;
+    padding:  52px 48px;
     gap: 0;
   }
   .hero-eyebrow {
@@ -217,26 +346,31 @@
     color: var(--text-muted);
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
+    /*margin-top: -200px;*/
     opacity: 0;
     animation: fadeUp 0.7s 0.6s forwards;
   }
   .hero-badges {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 50px;
     opacity: 0;
     animation: fadeUp 0.7s 0.5s forwards;
   }
   .hero-badge {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 8px;
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 4px;
-    padding: 14px 16px;
+    padding: 28px 16px;
     transition: border-color 0.2s;
+    max-width: 75%;
+    transform: scale(1.25); /* Scales the content to 150% of its original size */
+    transform-origin: top left; /* Ensures it scales evenly from the center */
+    overflow: hidden;
   }
   .hero-badge:hover { border-color: var(--border-hi); }
   .badge-icon {
@@ -616,6 +750,15 @@
 <!-- NAV -->
 <nav>
   <div class="nav-logo">PS_</div>
+  
+  <input type="checkbox" id="menu-toggle" class="menu-toggle">
+  
+  <label for="menu-toggle" class="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </label>
+
   <div class="nav-links">
     <a href="#experience">Experience</a>
     <a href="#projects">Projects</a>
@@ -995,6 +1138,16 @@
   }, { threshold: 0.35 });
   document.querySelectorAll('section[id]').forEach(s => sectionObserver.observe(s));
 
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.querySelector('nav');
+    const checkbox = document.querySelector('#menu-toggle');
+
+    // Automatically uncheck the box and close everything when the mouse leaves the nav
+    nav.addEventListener('mouseleave', () => {
+      checkbox.checked = false;
+    });
+  });
+
   // ── CONTACT FORM ──
   // Uses Formspree (free). Steps:
   // 1. Go to https://formspree.io and sign up (free)
@@ -1041,6 +1194,9 @@
   document.querySelectorAll('.cf-input').forEach(inp => {
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') submitForm(); });
   });
+
+  
 </script>
 </body>
 </html>
+
