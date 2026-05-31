@@ -65,7 +65,13 @@
     mix-blend-mode: normal;
   }
   .cursor.expanded { width: 34px; height: 34px; opacity: 0.25; }
-
+ 
+      @media (pointer: coarse) {
+    .your-custom-cursor-class {
+      display: none !important;
+      pointer-events: none;
+    }
+  }
   /* GRID TEXTURE OVERLAY */
   body::after {
     content: '';
